@@ -37,7 +37,6 @@ result$data$fa %>%
   as_tibble()
 
 
-
 #Another example
 
 newquery<- Query$new()$query('link', 'query MyQuery {
@@ -144,16 +143,7 @@ Dogamiquery<-Query$new()$query('link', 'query MyQuery {
 }
 ')
 
-dogami <- conn$exec(Dogamiquery$link, variables = variable) %>%
-  fromJSON(flatten = F)
-str(dogami)
-dogami_fa2<-dogami$data$fa2_attribute_count
-dogami_fa2
-dim(dogami_fa2)
-dogami_fa2$newid<-1:500
-
-summary(dogami_fa2$tokens)
 
 
-ggplot(dogami_fa2, aes(newid,tokens))+geom_col(fill="#87CEEB")
+
 
