@@ -37,7 +37,7 @@ result$data$fa %>%
   as_tibble()
 
 
-#Another example
+#Another example-----
 
 newquery<- Query$new()$query('link', 'query MyQuery {
   event(
@@ -101,11 +101,9 @@ result <- conn$exec(newquery$link, variables = variable) %>%
 result
 matrix<-result$data$event
 str(result$data)
-matrix.fa2<-result$data$currency
-matrix.fa2
 
-summary(result$data$fa2_attribute_count$id)
 
+#get Dogami NFT contract info--------
 Dogamiquery<-Query$new()$query('link', 'query MyQuery {
   fa(where: {contract: {_eq: "KT1NVvPsNDChrLRH5K2cy6Sc9r1uuUwdiZQd"}}) {
     active_auctions
@@ -144,6 +142,8 @@ Dogamiquery<-Query$new()$query('link', 'query MyQuery {
 ')
 
 
-
+result <- conn$exec(Dogamiquery$link, variables = variable) %>%
+  fromJSON(flatten = F) 
+str(result$data$fa)
 
 
