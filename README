@@ -1,0 +1,5 @@
+This project is for me to practice API data analyze skills in Objkt.com, the biggest NFT marketplace for Tezos.
+My plan is to focus on big NFT projects such as Dogami(Now), Tezzardz and Ottez.
+
+The File "Accessing GraphQL in R studio" introduced how to access Objkt.com API from R studio
+The File "Dogami token attributes" summarized and visualize the distribution of NFT attributes in Dogami collection 
