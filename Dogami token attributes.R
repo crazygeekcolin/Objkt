@@ -1,4 +1,8 @@
+install.packages("RColorBrewer")
+install.packages("Rtools")
+library(ggpubr)
 library(stringr)
+library(tidyr)
 
 #Test query---------------
 Dogamiquery<-'query MyQuery {
@@ -129,6 +133,7 @@ Sys.sleep(0.6)
 dogami_attribute$token_id <-as.numeric(dogami_attribute$token_id)
 dogami_attribute$id <-as.numeric(dogami_attribute$id)
 dogami_attribute <- dogami_attribute%>%arrange(token_id,id)
+dogami_attribute <- dogami_attribute%>%filter(!is.na(dogami_attribute$token_id))
 
 #Inspection-------
 summary(dogami_attribute$value == "Bronze") #There are 6020 Bronze Dogami, correct.
@@ -146,10 +151,34 @@ rarity_score$value <-as.numeric(rarity_score$value)
 head(rarity_score)
 tail(rarity_score)
 
-#Plots of attributes----------
-ggplot(rarity_score, aes(value))+
+
+#Reorganize the attribute table-------  
+puppies <- dogami_attribute %>% filter(dogami_attribute$value == "Puppy")
+puppies_id <- puppies$token_id
+puppies <- dogami_attribute %>% 
+  filter(dogami_attribute$token_id %in% puppies_id) %>% 
+  select(c(-1,-2))
+#To check success exclude Boxes
+Boxes <- (nrow(dogami_attribute)-nrow(puppies))/2
+
+head(puppies)
+unique(puppies$name)
+#temp <- puppies%>%pivot_wider(id_cols = token_id, names_from = name, values_from = value)
+puppies <- puppies%>%spread(key= name, value = value, convert =T)%>%arrange(token_id)
+str(puppies)
+
+#Draw the plots---------
+names(puppies)
+summary(puppies$`Rarity score`)
+unique(puppies$`Rarity tier`)
+
+ggplot(puppies, aes(`Rarity score`))+
   geom_histogram(bins = 30, fill = "#87CEEB", colour = "black", boundary = 35)+
   ggtitle("Distribution of Dogami rarity scores ")+
   theme_bw()
-  
 
+ggplot(puppies, aes(x= `Rarity tier`,y=`Rarity score`))+
+  geom_boxplot()+
+  ggtitle("Distribution of Dogami rarity scores")+
+  theme_bw()
+ggboxplot(puppies, x="Rarity tier" ,y="Rarity score",order =c("Bronze","Silver","Gold","Diamond"))+scale_color_date()
