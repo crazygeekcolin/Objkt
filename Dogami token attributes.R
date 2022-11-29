@@ -1,8 +1,10 @@
-install.packages("RColorBrewer")
-install.packages("Rtools")
 library(ggpubr)
 library(stringr)
 library(tidyr)
+library(RColorBrewer)
+library(lubridate)
+library(fastDummies)
+
 
 #Test query---------------
 Dogamiquery<-'query MyQuery {
@@ -167,18 +169,91 @@ unique(puppies$name)
 puppies <- puppies%>%spread(key= name, value = value, convert =T)%>%arrange(token_id)
 str(puppies)
 
-#Draw the plots---------
+#Draw the plots, Rarity tier---------
 names(puppies)
 summary(puppies$`Rarity score`)
-unique(puppies$`Rarity tier`)
 
-ggplot(puppies, aes(`Rarity score`))+
-  geom_histogram(bins = 30, fill = "#87CEEB", colour = "black", boundary = 35)+
+ggplot(puppies, aes(`Rarity score`,fill = `Rarity tier`))+ 
+  geom_histogram(bins = 30, colour = "black", boundary = 35)+
+  scale_fill_brewer(palette= "Set2")+
   ggtitle("Distribution of Dogami rarity scores ")+
   theme_bw()
 
-ggplot(puppies, aes(x= `Rarity tier`,y=`Rarity score`))+
-  geom_boxplot()+
+puppies%>% count(Birthday, sort = T)
+# ggplot(puppies, aes(x= `Rarity tier`,y=`Rarity score`, fill = `Rarity tier`))+
+#   geom_boxplot()+
+#   scale_fill_brewer(palette= "Set2")
+#   ggtitle("Distribution of Dogami rarity scores")+
+#   theme_bw()
+  
+ggboxplot(puppies, x="Rarity tier" ,y="Rarity score", order =c("Bronze","Silver","Gold","Diamond"), fill = "Rarity tier")+
+  scale_fill_brewer(palette= "Set2")+
   ggtitle("Distribution of Dogami rarity scores")+
   theme_bw()
-ggboxplot(puppies, x="Rarity tier" ,y="Rarity score",order =c("Bronze","Silver","Gold","Diamond"))+scale_color_date()
+ggboxplot(puppies, x="Rarity tier" ,y="Rarity score", order =c("Bronze","Silver","Gold","Diamond"), fill = "Generation")+
+  scale_fill_brewer(palette= "Dark2")+
+  ggtitle("Distribution of Dogami rarity scores")+
+  theme_bw()
+ggboxplot(puppies, x="Rarity tier" ,y="Rarity score", order =c("Bronze","Silver","Gold","Diamond"), fill = "Gender")+
+  scale_fill_brewer(palette= "Dark2")+
+  ggtitle("Distribution of Dogami rarity scores by Gender")+
+  theme_bw()
+
+#illustrate geom_col------
+head(puppies)
+temp <-puppies%>% 
+  group_by(Generation)%>%
+  count(Birthday, sort = T)
+
+temp <- temp[1:8,]%>%
+  arrange(desc(n))
+temp
+temp%>%
+  ggplot(aes(x= factor(as.character(Birthday),levels = as.character(Birthday)),n, fill = Generation,))+
+  geom_col()+
+  scale_fill_brewer(palette= "Set2")+
+  ggtitle("In which date tokens are minted? (8 highest dates)")+
+  xlab("Mint date")
+  theme_bw()
+
+
+temp<-puppies%>%
+  count(`Fur color`, sort=T)%>%
+  arrange(n)
+temp<-temp[(nrow(temp)-7):nrow(temp),]
+temp%>%
+  ggplot(aes(x=factor(`Fur color`, levels = `Fur color`), n, fill = `Fur color`))+
+   geom_col()+
+  scale_fill_brewer(palette= "Set3")+
+  ggtitle("Fur color count")+
+  theme_bw()
+
+
+#Equation--------
+puppies<-dummy_cols(puppies, select_columns = "Rarity tier")
+dataf <- dummy_cols(dataf, select_columns = 'rank')
+
+#Simple linear regression
+lm1<- lm(`Rarity score`~ Friendliness+ Intelligence + Obedience + Strength + Vitality 
+         + `Rarity tier_Diamond`+`Rarity tier_Gold`+`Rarity tier_Silver`
+         , data = puppies)
+summary(lm1)
+head(puppies)
+
+puppies_Bronze<- puppies %>% filter(`Rarity tier`== "Bronze")
+puppies_Silver<- puppies %>% filter(`Rarity tier`== "Silver")
+lm_bronze<- lm(`Rarity score`~ Friendliness+ Intelligence + Obedience + Strength + Vitality 
+               , data = puppies_Bronze)
+summary(lm_bronze)
+
+lm_silver<- lm(`Rarity score`~ Friendliness+ Intelligence + Obedience + Strength + Vitality 
+               , data = puppies_Silver)
+summary(lm_silver)
+
+lm_gold<- lm(`Rarity score`~ Friendliness+ Intelligence + Obedience + Strength + Vitality 
+               , data = puppies[puppies$`Rarity tier`== "Gold",])
+summary(lm_gold)
+
+lm_diamond<- lm(`Rarity score`~ Friendliness+ Intelligence + Obedience + Strength + Vitality 
+             , data = puppies[puppies$`Rarity tier`== "Diamond",])
+summary(lm_diamond)

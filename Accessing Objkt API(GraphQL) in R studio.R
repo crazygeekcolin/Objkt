@@ -7,7 +7,6 @@
 library(ghql)
 library(jsonlite)
 library(dplyr)
-library(ggplot2)
 
 
 link <- 'https://data.objkt.com/v2/graphql'
