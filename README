@@ -5,3 +5,11 @@ The File ".RData" is the data getting from API and sort out after.
 
 The File "Accessing Objkt API(GraphQL) in R studio" introduced how to access Objkt.com API from R studio.
 The File "Dogami token attributes" summarized and visualize the distribution of NFT attributes in the Dogami collection.
+
+In this project, I conduct these steps in a 205638*6 table:
+Analyze the Graphql API, and connect the API to R
+Check the data scrapped is completed (due to the API limit, missing data is founded in attempts)
+
+Transform the raw table: the original table combines multiple variables in one column (and table into tables like a JSON), and I separate them into multiple columns.
+Transform the data format, such as strings to integers.
+To do linear regression in the whole data set and subset, to see the difference of parameters in subsets.
