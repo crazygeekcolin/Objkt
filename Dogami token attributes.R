@@ -141,7 +141,7 @@ dogami_attribute <- dogami_attribute%>%filter(!is.na(dogami_attribute$token_id))
 summary(dogami_attribute$value == "Bronze") #There are 6020 Bronze Dogami, correct.
 summary(dogami_attribute$value == "Diamond") 
 summary(dogami_attribute$value == "Husky") #There are 704 Husky, correct.
-summary(dogami_attribute$value == "Box" | dogami_attribute$value == "Puppy")
+summary(dogami_attribute$value == "Box" | dogami_attribute$value == "Puppy") #Total 12000tokens
 summary(dogami_attribute$value == "Puppy")
 
 #To check a special Dogami by Token ID------
@@ -254,6 +254,29 @@ lm_gold<- lm(`Rarity score`~ Friendliness+ Intelligence + Obedience + Strength +
                , data = puppies[puppies$`Rarity tier`== "Gold",])
 summary(lm_gold)
 
+
 lm_diamond<- lm(`Rarity score`~ Friendliness+ Intelligence + Obedience + Strength + Vitality 
              , data = puppies[puppies$`Rarity tier`== "Diamond",])
 summary(lm_diamond)
+
+#Plots of characters
+names(puppies)
+ggboxplot(puppies, x="Friendliness" ,y="Rarity score", fill = "Friendliness")+
+  scale_fill_brewer(palette= "Set3")+
+  ggtitle("Distribution of Dogami rarity scores")+
+  theme_bw()
+
+ggboxplot(puppies, x="Intelligence" ,y="Rarity score", fill = "Intelligence")+
+  scale_fill_brewer(palette= "Set3")+
+  ggtitle("Distribution of Dogami rarity scores")+
+  theme_bw()
+
+ggboxplot(puppies, x="Vitality" ,y="Rarity score", fill = "Vitality")+
+  scale_fill_brewer(palette= "Set3")+
+  ggtitle("Distribution of Dogami rarity scores")+
+  theme_bw()
+
+ggboxplot(puppies, x="Strength" ,y="Rarity score", fill = "Strength")+
+  scale_fill_brewer(palette= "Set3")+
+  ggtitle("Distribution of Dogami rarity scores")+
+  theme_bw()
