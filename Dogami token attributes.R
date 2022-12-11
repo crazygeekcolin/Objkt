@@ -4,6 +4,9 @@ library(tidyr)
 library(RColorBrewer)
 library(lubridate)
 library(fastDummies)
+library(openxlsx)
+
+
 
 
 #Test query---------------
@@ -95,9 +98,12 @@ test
 
 
 list <- c(5:10)
+print(list)
 string1<- sprintf('"%s"', list)
+print(string1)
+writeLines(toString(string1)) #What it shows in the Graphql query
 #string1[2] <- substring(string1[2],1, nchar(string1[2])-1) #Delete ","
-writeLines(toString(string1))
+
 
 string2 <-sprintf('query MyQuery {
   token_attribute(
@@ -280,3 +286,6 @@ ggboxplot(puppies, x="Strength" ,y="Rarity score", fill = "Strength")+
   scale_fill_brewer(palette= "Set3")+
   ggtitle("Distribution of Dogami rarity scores")+
   theme_bw()
+
+write.xlsx(puppies,file = "puppies")
+?write.xlsx
