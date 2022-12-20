@@ -24,3 +24,18 @@ query MyQuery {
 }
 }
 
+
+library(tidyverse)
+
+mpg[mpg$manufacturer == 'audi'& mpg$year =='1999',]$hwy
+a = mpg[mpg$manufacturer == 'audi'& mpg$year =1999]$hwy
+a = a+1
+a
+
+
+for (i in meanup$Brand) {
+  b<-meannp[meanup$brand = i]$meanprice
+  uk.df [uk.df$Brand ==i&uk.dfPrice ==0, ]$Price <- b
+  
+  
+}
